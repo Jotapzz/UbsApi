@@ -1,0 +1,6 @@
+@UbsApi_HostAddress = http://localhost:5296
+
+GET {{UbsApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

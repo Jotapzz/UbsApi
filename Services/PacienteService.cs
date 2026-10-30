@@ -14,18 +14,13 @@ namespace UbsApi.Services
 
         public bool VerificarMaioridade(DateTime data)
         {
-            if(data.AddYears(18) < DateTime.Now)
-            {
-                return false;
-            }
-
-            return true;
+            return data.AddYears(18) < DateTime.Now;
         }
 
         //Verifica o cpf do paciente
         public bool ValidarCpf(string cpf)
         {
-            if(cpf.Length < 11 || string.IsNullOrEmpty(cpf))
+            if(cpf.Length < 11)
             {
                 return false;
             }
@@ -62,18 +57,20 @@ namespace UbsApi.Services
             {
                 return false;
             }
+
             // paciente existe
             if (PacienteExiste(paciente.Cpf!))
             {
                 return false;
-            } else
+            }
+
+            //Se NÃO for maior de idade(ou seja, é menor)
+            if (!VerificarMaioridade(paciente.DataNascimento))
             {
-                if(!VerificarMaioridade(paciente.DataNascimento))
+                //Se o CPF do responsável for nulo, vazio, igual a "string" ou inválido, rejeita!
+                if (!ValidarCpf(paciente.CpfResponsavel!) || string.IsNullOrEmpty(paciente.CpfResponsavel!) || paciente.CpfResponsavel == "string")
                 {
-                    if(!ValidarCpf(paciente.CpfResponsavel!))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
 
@@ -100,15 +97,27 @@ namespace UbsApi.Services
         //Verifica se existe um cpf de maior, caso exista ele edita o paciente
         public bool EditarPaciente (string cpf, PacienteModel pacienteEditado)
         {
-            foreach (PacienteModel paciente in _ListaPacientes)
+            if(!PacienteExiste(cpf))
             {
-                if(paciente.Cpf == cpf)
+                return false;
+            } else
+            {
+                foreach (PacienteModel paciente in _ListaPacientes)
                 {
-
+                    if (paciente.Cpf == cpf)
+                    {
+                        paciente.Nome = pacienteEditado.Nome;
+                        paciente.Telefone = pacienteEditado.Telefone;
+                        paciente.DataNascimento = pacienteEditado.DataNascimento;
+                        paciente.Endereco = pacienteEditado.Endereco;
+                        paciente.NomeAgenteSaude = pacienteEditado.NomeAgenteSaude;
+                        paciente.CpfResponsavel = pacienteEditado.CpfResponsavel;
+                        return true;
+                    }
                 }
+                return false;
             }
-
-            return false;
+            
         }
 
         //Exclui um Paciente de acordo com o cpf Digitado

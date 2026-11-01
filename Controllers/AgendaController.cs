@@ -14,9 +14,11 @@ namespace UbsApi.Controllers
 
         // GET: api/<AgendaController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult ListarAgendamento()
         {
-            return new string[] { "value1", "value2" };
+            List<AgendaModel> agendamentos = funcaoAgenda.ListarAgendamentos();
+            return Ok(agendamentos);
+            
         }
 
         // GET api/<AgendaController>/5

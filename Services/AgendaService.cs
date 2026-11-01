@@ -10,7 +10,10 @@ namespace UbsApi.Services
 
         private static int _AgendaID = 1;
 
-
+        public List<AgendaModel> ListarAgendamentos()
+        {
+            return _AgendaList;
+        }
 
         public bool CriarAgendamento(string cpf, string crm, DateTime dataHorarioAgendar, string especialidade)
         {
